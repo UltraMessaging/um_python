@@ -79,9 +79,16 @@ See [Installation and Status](https://cffi.readthedocs.io/en/latest/installation
 
 * Download um_python project from
 [Github repository](https://github.com/UltraMessaging/um_python).
-You can either clone or download a simple ZIP file.
+You can either clone the repository or
+[download the ZIP file](https://github.com/UltraMessaging/um_python/archive/master.zip).
+From Linux, enter:
+```
+wget https://github.com/UltraMessaging/um_python/archive/master.zip
+unzip master
+cd um_python-master
+```
 
-* Run the command:
+* Create the Wrapper:
 ```
 ./build_lbm_py.sh UM_PLATFORM_DIR
 ```
@@ -121,8 +128,10 @@ It will look for the file "um.cfg" and read a configuration if it exists,
 but if not, it will simply use all of the default topic resolution multicast
 group.
 If your internal network has other programs running that use UM's
-default topic resolution multicast group, this test program has the ability to
-disrupt those programs.
+default topic resolution multicast group, **this test has the ability to
+disrupt those programs**.
+Informatica recommends creating a "um.cfg" file with multicast groups that
+do not interfere with other instances of UM.
 
 # Using the API
 
