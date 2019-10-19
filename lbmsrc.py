@@ -104,9 +104,9 @@ message = ffi.new("char [2000]","")
 #let topic res complete
 time.sleep(1)
 
-for i in range(100000):
+for i in range(1000):
 	message = "message%d" % i
-	err = lib.lbm_src_send(src,message,2000,lib.LBM_SRC_NONBLOCK)
+	err = lib.lbm_src_send(src,message,2000,lib.LBM_SRC_BLOCK)
 	if err == lib.LBM_FAILURE:
 		print("failed in lbm_src_send: " + ffi.string(lib.lbm_errmsg()))
 		sys.exit(1)

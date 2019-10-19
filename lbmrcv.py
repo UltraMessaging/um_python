@@ -21,8 +21,6 @@
 import os,sys,time
 from _lbm_cffi import ffi,lib
 
-done = 0
-
 #receiver event callback
 @ffi.def_extern()
 def rcv_handle_msg(rcv, msg, clientd):
@@ -99,10 +97,9 @@ if lib.lbm_rcv_create(p_rcv, ctx, topic, lib.rcv_handle_msg, ffi.NULL, ffi.NULL)
 rcv = p_rcv[0]
 print("Receiver created for test topic")
 
-#run forever till done
+#run forever
 while True:
-	if done == 1:
-		break
+	time.sleep(1)
 
 #cleanup
 print("Deleting receiver")
