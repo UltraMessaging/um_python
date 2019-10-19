@@ -103,6 +103,17 @@ The tool generates the file "_lbm_cffi.so" which implements the API wrapper.
 
 # Test the Wrapper
 
+**WARNING**: the lbmsrc.py program publishes messages to your network on
+the topic "test".
+It will look for the file "um.cfg" and read a configuration if it exists,
+but if not, it will simply use all of the default topic resolution multicast
+group.
+If your internal network has other programs running that use UM's
+default topic resolution multicast group, **this test has the ability to
+disrupt those programs**.
+Informatica recommends creating a "um.cfg" file with multicast groups that
+do not interfere with other instances of UM.
+
 * Set the environment variable "LD_LIBRARY_PATH" to the "lib" directory of
 your UM installation.
 For example:
@@ -116,22 +127,22 @@ For example:
 export LBM_LICENSE_INFO='Product=UME:Organization=My Org:Expiration-Date=never:License-Key=XXXX XXXX XXXX XXXX'
 ```
 
-* Run the program.
-For example:
+* Run publisher program.
 ```
 python lbmsrc.py
 ```
 
-**WARNING**: the lbmsrc.py program publishes messages to your network on
-the topic "test".
-It will look for the file "um.cfg" and read a configuration if it exists,
-but if not, it will simply use all of the default topic resolution multicast
-group.
-If your internal network has other programs running that use UM's
-default topic resolution multicast group, **this test has the ability to
-disrupt those programs**.
-Informatica recommends creating a "um.cfg" file with multicast groups that
-do not interfere with other instances of UM.
+* Run the subscriber and publisher at the same time.
+In window 1 start the subscriber:
+```
+python lbmrcv.py
+```
+In window 2 start the publisher:
+```
+python lbmsrc.py
+```
+The subscriber should get 1000 messages (0-999).
+Use control-C to kill the subscriber.
 
 # Using the API
 
