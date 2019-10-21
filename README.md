@@ -67,10 +67,12 @@ Make sure it is in your PATH.
 * The "perl" command must invoke the Perl language interpreter.
 Make sure it is in your PATH.
 
-* The "python" command must invoke Python 2.x.
+* The "python" command must invoke Python.
 Make sure it is in your PATH.
-(The cffi documentation claims that the resulting API wrapper is compatible
-with Python 3.x. However, Informatica has not tested this.)
+We have tried it with both Python 2.7 and 3.7; both seem to work.
+However, a single ".so" will not work for both Python versions.
+You must build the ".so" wth the version of Python that you plan to use
+in your runtime environment.
 
 * The Python module "cffi" must be installed.
 See [Installation and Status](https://cffi.readthedocs.io/en/latest/installation.html).
