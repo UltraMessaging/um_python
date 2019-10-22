@@ -67,6 +67,9 @@ def pylbm_src_cb_proc(src, event, event_data, clientd):
     return 0
 
 
+# This test program uses the "new source notification" callback to
+# demonstrate setting up a callback via a configuration option.
+# See call to lib.lbm_context_attr_setopt() below.
 @ffi.def_extern()
 def pylbm_src_notify_function_cb(topic_str, src_str, clientd):
     'New source notification callback.'
@@ -105,6 +108,9 @@ def main():
     # Get the attribute pointer.
     cattr = p_cattr[0]
 
+    # This test program uses the "new source notification" callback to
+    # demonstrate setting up a callback via a configuration option.
+    # See python function pylbm_src_notify_function_cb() above.
     lbm_src_notify_func = ffi.new('lbm_src_notify_func_t *')
     lbm_src_notify_func.notifyfunc = lib.pylbm_src_notify_function_cb
     lbmerr(
