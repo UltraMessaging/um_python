@@ -163,12 +163,13 @@ not is needed at runtime, we recommend keeping them for reference purposes.
 
 ## Callbacks
 
-UM uses a large number of application callbacks (54 as of UM version 6.11.1).
+UM uses a large number of application callbacks (54 as of UM version 6.11.1),
+although most real-world applications only use a few of them.
 The application passes a pointer to its function either as a parameter to
 a UM API function, or as a field in a UM data structure.
 
-To keep the UM wrapper as fast and efficient as possible, a single Python
-function is defined for each callback type (signature).
+To keep the UM Python wrapper as fast and efficient as possible, a single
+Python function is defined for each callback type (signature).
 The application must supply a function with that name and pass it to the
 UM API which sets the callback.
 
@@ -201,14 +202,13 @@ defined like this:
 def pylbm_rcv_cb_proc(rcv, msg, clientd):
 ```
 
-This approach has a significant disadvantage.
+This approach has a significant disadvantage:
 It is not unusual for a developer to want to have different receive
 callbacks for different topics (or classes of topics).
-
-A simple method of solving this problem is to define a callback class which
+A simple approach of solving this problem is to define a callback class which
 decouples the callback that UM calls from the application callback
 function.
-This method was implemented for the receive event callback in the "lbmtst.py"
+This approach is demonstrated for the receiver callback in the "lbmtst.py"
 test program using a class named "LbmRcvCallback".
 Note however that this class introduces a small additional latency.
 For the lowest possible latency, you must directly use the single receiver
