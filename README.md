@@ -108,11 +108,17 @@ For example:
 ```
 The tool expects to find the "lib" and "include" directories there.
 
-The tool generates the file "_lbm_cffi.so" which implements the API wrapper.
+The tool generates a ".so" file which implements the API wrapper.
+Python 2.7 names the file "_lbm_cffi.so", and Python 3.7 names the
+file in a more complicated way.
+For example,
+on my system it names it "_lbm_cffi.cpython-37m-x86_64-linux-gnu.so".
+At any rate, look for "*.so" and make sure that file is available to Python
+at run-time.
 
 # Test the Wrapper
 
-**WARNING**: the lbmtst.py program publishes messages to your network on
+**WARNING**: the "lbmtst.py" program publishes messages to your network on
 the topic "lbmtst.py".
 It will look for the file "um.cfg" and read a configuration if it exists,
 but if not, it will simply use all of the default topic resolution multicast
@@ -220,9 +226,23 @@ callback "pylbm_rcv_cb_proc()".
 Traceback (most recent call last):
   File "/home/sford/python/new/lbmwrapper.py", line 1, in <module>
     from cffi import FFI
-ImportError: No module named cffi
+ImportError: ...
 Cannot continue processing, error occured
 ```
 
 You or your system administrator needs to install cffi.
 See [cffi installation instructions](https://cffi.readthedocs.io/en/latest/installation.html).
+
+## Problem running application
+
+```
+Traceback (most recent call last):
+  File "lbmtst.py", line 22, in <module>
+    from _lbm_cffi import ffi, lib
+ImportError: ...
+```
+
+This can mean that the ".so" wrapper library can't be found by Python.
+
+It can also mean that the wrapper was generated with one version of Python
+and the program is being run with the other version of Python.
