@@ -1,4 +1,4 @@
-# um_python
+# um_python Vers 0.2
 Python API generator for Ultra Messaging using Python cffi.
 
 * [Introduction](#introduction)
@@ -11,12 +11,12 @@ Python API generator for Ultra Messaging using Python cffi.
 # Introduction
 
 This project is a simple tool to generate an Ultra Messaging wrapper API for
-Python using the cffi interface.
-Note that cffi is a python wrapper over the UM native library,
+Python using cffi.
+Note that a cffi API is a python wrapper around a native library,
 and therefore requires the UM native dynamic library to be installed.
 I.e. this is not a pure Python implementation of UM.
 
-Python itself has tools to make the generation of cffi APIs easy.
+Python itself has tools to make the generation of cffi APIs reasonably easy.
 For example, it can read a C header file (.h) and do most of the work for you.
 However, the UM "lbm.h" file is not well-suited to the cffi tools.
 The tools in the "um_python" project performs a set of transformations on
@@ -105,8 +105,8 @@ The tool generates the file "_lbm_cffi.so" which implements the API wrapper.
 
 # Test the Wrapper
 
-**WARNING**: the lbmsrc.py program publishes messages to your network on
-the topic "test".
+**WARNING**: the lbmtst.py program publishes messages to your network on
+the topic "lbmtst.py".
 It will look for the file "um.cfg" and read a configuration if it exists,
 but if not, it will simply use all of the default topic resolution multicast
 group.
@@ -129,22 +129,11 @@ For example:
 export LBM_LICENSE_INFO='Product=UME:Organization=My Org:Expiration-Date=never:License-Key=XXXX XXXX XXXX XXXX'
 ```
 
-* Run publisher program.
+* Run test program.
+Publishes 50 messages and receives all of them.
 ```
-python lbmsrc.py
+python lbmtst.py
 ```
-
-* Run the subscriber and publisher at the same time.
-In window 1 start the subscriber:
-```
-python lbmrcv.py
-```
-In window 2 start the publisher:
-```
-python lbmsrc.py
-```
-The subscriber should get 1000 messages (0-999).
-Use control-C to kill the subscriber.
 
 # Using the API
 
@@ -156,6 +145,29 @@ See [cffi documentation](https://cffi.readthedocs.io/en/latest/overview.html).
 
 The lbmsrc.py and lbmrcv.py example programs should get you started.
 The generated file "_lbm_cffi.c" can also sometimes be helpful.
+
+# Callbacks
+
+In this version of the wrapper, only three application callbacks are defined:
+* Source event callback
+* Receiver event callback
+* Logger callback
+
+These are defined in "lbm_py_callback.h", and are the names of Python
+functions in your program.
+Note that the names of those functions are set at build time of the wrapper
+and cannot be changed over time or across application programs.
+
+This is obviously not a good situation since application programmers will
+want to use their own naming conventions.
+In fact, it is a serious problem because some applications need to assign
+different topics to different callback functions.
+
+A simple method of solving this problem is to define a callback class which
+decouples the callback that UM calls from the application callback
+function.
+This method was implmented for the receive event callback in the "lbmtst.py"
+test program.
 
 # Troubleshooting
 
