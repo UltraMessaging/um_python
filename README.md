@@ -171,6 +171,8 @@ UM uses a large number of application callbacks (54 as of UM version 6.11.1),
 although most real-world applications only use a few of them.
 The application passes a pointer to its function either as a parameter to
 a UM API function, or as a field in a UM data structure.
+(The "lbmtst.py" test program demonstrates both ways.
+Search for "lbm_src_notify_func" for the data structure method.)
 
 To keep the UM Python wrapper as fast and efficient as possible, a single
 Python function is defined for each callback type (signature).
@@ -220,7 +222,7 @@ callback "pylbm_rcv_cb_proc()".
 
 # Troubleshooting
 
-## Problems running build_lbm_py.sh
+## Import Problem Running build_lbm_py.sh
 
 ```
 Traceback (most recent call last):
@@ -233,7 +235,7 @@ Cannot continue processing, error occured
 You or your system administrator needs to install cffi.
 See [cffi installation instructions](https://cffi.readthedocs.io/en/latest/installation.html).
 
-## Problem running application
+## Import Problem Running Application
 
 ```
 Traceback (most recent call last):
@@ -246,3 +248,14 @@ This can mean that the ".so" wrapper library can't be found by Python.
 
 It can also mean that the wrapper was generated with one version of Python
 and the program is being run with the other version of Python.
+
+## Convert Problem Running Application
+
+```
+Trying to convert the result back to C:
+TypeError: an integer is required
+```
+
+This can mean that you coded an application callback that didn't return
+a value.
+Most application callbacks need to return an interger value zero.

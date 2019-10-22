@@ -68,6 +68,15 @@ def pylbm_src_cb_proc(src, event, event_data, clientd):
 
 
 @ffi.def_extern()
+def pylbm_src_notify_function_cb(topic_str, src_str, clientd):
+    'New source notification callback.'
+    topic = ffi.string(topic_str).decode('utf-8')
+    source = ffi.string(src_str).decode('utf-8')
+    print('new source: topic=' + topic + ', source_string=' + source)
+    return 0
+
+
+@ffi.def_extern()
 def pylbm_log_cb_proc(level, message, clientd):
     'UM logger application callback.'
     print(ffi.string(message).decode('utf-8'))
@@ -95,6 +104,15 @@ def main():
     lbmerr(lib.lbm_context_attr_create(p_cattr))
     # Get the attribute pointer.
     cattr = p_cattr[0]
+
+    lbm_src_notify_func = ffi.new('lbm_src_notify_func_t *')
+    lbm_src_notify_func.notifyfunc = lib.pylbm_src_notify_function_cb
+    lbmerr(
+        lib.lbm_context_attr_setopt(cattr,
+                                    b'resolver_source_notification_function',
+                                    lbm_src_notify_func,
+                                    ffi.sizeof('lbm_src_notify_func_t')))
+
 
     # Create the context.
     p_ctx = ffi.new('lbm_context_t **')
