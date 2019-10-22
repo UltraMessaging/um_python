@@ -31,14 +31,12 @@ However, the UM "lbm.h" file is not well-suited to the cffi tools.
 The tools in the "um_python" project performs a set of transformations on
 your "lbm.h" file, and invokes the cffi tools.
 
-**ATTENTION**: this Python API has \*not\* been extensively tested by
-Informatica.
-In particular, we have not performed our QA test suites on it.
-This project is intended to jump-start UM users to produce their
-own Python API, which they will support.
-
-Note however, that Informatica will perform "best effort" support when
-users have problems with the Python API.
+**ATTENTION**: this Python API is \*not\* an official part of the UM
+product and has not been extensively tested by us.
+We offer it to you to shorten your development cycle, but understand that
+it has not been through our QA cycle.
+We are happy look into any problems you find and fix them if possible.
+But the bulk of testing responsibility is yours.
 Please contact us through the normal UM support channel if you encounter
 problems and/or have suggestions for its improvement.
 
