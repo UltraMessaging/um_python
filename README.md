@@ -1,6 +1,14 @@
 # um_python Vers 0.2
 Python API generator for Ultra Messaging using Python cffi.
 
+**THIS IS A WORK IN PROGRESS** Disruptive changes should be expected
+on a daily, even hourly basis.
+There is no "stable" release as yet, although we attempt to make the
+"master" branch at least buildable at any given time.
+The purpose for publishing the um_python project this early is to give
+users a feeling for the direction we are going, and to give users the
+opportunity to contribute.
+
 * [Introduction](#introduction)
 * [Prerequisites](#prerequisites)
 * [Generate the Wrapper](#generate-the-wrapper)
@@ -12,6 +20,7 @@ Python API generator for Ultra Messaging using Python cffi.
 
 This project is a simple tool to generate an Ultra Messaging wrapper API for
 Python using cffi.
+
 Note that a cffi API is a python wrapper around a native library,
 and therefore requires the UM native dynamic library to be installed.
 I.e. this is not a pure Python implementation of UM.
@@ -71,7 +80,7 @@ Make sure it is in your PATH.
 Make sure it is in your PATH.
 We have tried it with both Python 2.7 and 3.7; both seem to work.
 However, a single ".so" will not work for both Python versions.
-You must build the ".so" wth the version of Python that you plan to use
+You must build the ".so" with the version of Python that you plan to use
 in your runtime environment.
 
 * The Python module "cffi" must be installed.
@@ -166,7 +175,7 @@ different topics to different callback functions.
 A simple method of solving this problem is to define a callback class which
 decouples the callback that UM calls from the application callback
 function.
-This method was implmented for the receive event callback in the "lbmtst.py"
+This method was implemented for the receive event callback in the "lbmtst.py"
 test program.
 
 # Troubleshooting
