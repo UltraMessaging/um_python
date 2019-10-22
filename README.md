@@ -1,4 +1,4 @@
-# um_python Vers 0.2
+# um_python Vers 0.3
 Python API generator for Ultra Messaging using Python cffi.
 
 **THIS IS A WORK IN PROGRESS** Disruptive changes should be expected
@@ -150,33 +150,69 @@ It is beyond the scope of this project to produce stand-alone documentation
 of the Python wrapper API.
 The user is expected to be familiar with the C API and with how cffi
 wraps functions and structures.
-See [cffi documentation](https://cffi.readthedocs.io/en/latest/overview.html).
+Since cffi is a wrapper around the C API, the
+[Ultra Messaging C API](https://ultramessaging.github.io/currdoc/doc/API/index.html)
+documentation should be used for API information.
+See also
+[cffi documentation](https://cffi.readthedocs.io/en/latest/overview.html).
 
-The lbmsrc.py and lbmrcv.py example programs should get you started.
-The generated file "_lbm_cffi.c" can also sometimes be helpful.
+The lbmtst.py example program should get you started.
+The generated files "_lbm_cffi.c" and "lbm_py_callback.h" can also be helpful.
+Although these files are only needed for the generation of the wrapper and
+not is needed at runtime, we recommend keeping them for reference purposes.
 
-# Callbacks
+## Callbacks
 
-In this version of the wrapper, only three application callbacks are defined:
-* Source event callback
-* Receiver event callback
-* Logger callback
+UM uses a large number of application callbacks (54 as of UM version 6.11.1).
+The application passes a pointer to its function either as a parameter to
+a UM API function, or as a field in a UM data structure.
 
-These are defined in "lbm_py_callback.h", and are the names of Python
-functions in your program.
-Note that the names of those functions are set at build time of the wrapper
-and cannot be changed over time or across application programs.
+To keep the UM wrapper as fast and efficient as possible, a single Python
+function is defined for each callback type (signature).
+The application must supply a function with that name and pass it to the
+UM API which sets the callback.
 
-This is obviously not a good situation since application programmers will
-want to use their own naming conventions.
-In fact, it is a serious problem because some applications need to assign
-different topics to different callback functions.
+When "./build_lbm_py.sh" is executed to create the wrapper, it creates
+a file named "lbm_py_callback.h" which defines the Python functions that
+the wrapper can call.
+
+For example, consider a UM receiver.
+A C application creates a receiver by calling
+[lbm_rcv_create](https://ultramessaging.github.io/currdoc/doc/API/lbm_8h.html#aa7491c50fefbc2b70f8035fce7ac1477).
+The 4th parameter is defined as:
+```
+  lbm_rcv_cb_proc  proc
+```
+where "lbm_rcv_cb_proc" is a typedef.
+
+To determine the corresponding Python function, drop any "_t" suffix
+(there isn't one for this typedef) and add a "py" in front.
+So, look in "lbm_py_callback.h" and find the function named
+"pylbm_rcv_cb_proc".
+It should look like this:
+```
+  extern "Python" int  pylbm_rcv_cb_proc(lbm_rcv_t *rcv, lbm_msg_t *msg, void *clientd);
+```
+
+This guides you in the definition of the python function, which should be
+defined like this:
+```
+@ffi.def_extern()
+def pylbm_rcv_cb_proc(rcv, msg, clientd):
+```
+
+This approach has a significant disadvantage.
+It is not unusual for a developer to want to have different receive
+callbacks for different topics (or classes of topics).
 
 A simple method of solving this problem is to define a callback class which
 decouples the callback that UM calls from the application callback
 function.
 This method was implemented for the receive event callback in the "lbmtst.py"
-test program.
+test program using a class named "LbmRcvCallback".
+Note however that this class introduces a small additional latency.
+For the lowest possible latency, you must directly use the single receiver
+callback "pylbm_rcv_cb_proc()".
 
 # Troubleshooting
 

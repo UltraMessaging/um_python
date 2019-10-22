@@ -1,5 +1,17 @@
 #!/usr/bin/env perl
 # lbm_h_py.pl
+#
+# The cffi tools are picky about the format of the include file.
+# This tool modifies our "lbm.h" file to cffi's needs:
+#   1. Most defintions must be on a single line. Lines that are continued
+#      with "\" must be combined to a single long line. A function prototype
+#      that spans multiple lines must also be combined to a single long line.
+#   2. Get rid of "#include" directives.
+#   3. Manifest constants (e.g. "#define FOO 23") must be simplified.
+#      No parentheses are allowed, and other constants may not be included
+#      symbolically.
+#   4. Any "#define"s that can't be simplified are removed.
+#   5. A few special-case fixes.
 
 use strict;
 use warnings;
@@ -66,9 +78,7 @@ while (<>) {
     if (defined($simple_defines{$val})) {
       # Substitute the previously-seen numeric value for the symbolic value here.
       my $new_val = $simple_defines{$val};
-      ### print STDERR "Debug: _='$_' -> ";
       s/(\#define\s+\w+)\s+\w+\b/$1 $new_val/;
-      ### print STDERR "_='$_'\n";
       # Just in case THIS definition is used later, remember its value too.
       $simple_defines{sym} = $new_val;
     }

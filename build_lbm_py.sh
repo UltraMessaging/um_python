@@ -92,6 +92,10 @@ clean_lbm_h (){
 generate_py_builder (){
 	echo "Generating LBM python builder file..."
 
+	# generate callback include file.
+    sed <$2 's/_t\([^a-z0-9_]\)/\1/' |
+		sed -n <$2 '/(\*/s/typedef \([a-z0-9_* ]*\)( *\* *\([a-z0-9_]*\) *) */extern "Python" \1 py\2/p' >$LBM_PY_CALLBACK_FILE
+
 	echo "from cffi import FFI" > $LBM_PY_BUILDER_FILE
 	echo "ffibuilder = FFI()" >> $LBM_PY_BUILDER_FILE
 	echo "" >> $LBM_PY_BUILDER_FILE
@@ -106,11 +110,9 @@ generate_py_builder (){
 	echo "" >> $LBM_PY_BUILDER_FILE
 
 	#check if callback is available and callbacks are defined
-	if [ -e $LBM_PY_CALLBACK_FILE ];then
-		echo "with open('$LBM_PY_CALLBACK_FILE') as f:" >> $LBM_PY_BUILDER_FILE
-		echo -e "\tffibuilder.cdef(f.read())" >> $LBM_PY_BUILDER_FILE
-		echo "" >> $LBM_PY_BUILDER_FILE
-	fi
+	echo "with open('$LBM_PY_CALLBACK_FILE') as f:" >> $LBM_PY_BUILDER_FILE
+	echo -e "\tffibuilder.cdef(f.read())" >> $LBM_PY_BUILDER_FILE
+	echo "" >> $LBM_PY_BUILDER_FILE
 
 	echo "ffibuilder.set_source(\"_lbm_cffi\"," >> $LBM_PY_BUILDER_FILE
 	echo "\"\"\""  >> $LBM_PY_BUILDER_FILE

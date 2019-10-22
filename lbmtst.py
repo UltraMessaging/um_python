@@ -30,12 +30,12 @@ class LbmRcvCallback(object):
         self.app_clientd = app_clientd
 
     def lbm_rcv_deliver(self, rcv, msg):
-        'Called by rcv_handle_msg to invoke application callback.'
+        'Called by pylbm_rcv_cb_proc to invoke application callback.'
         self.app_rcv_callback(rcv, msg, self.app_clientd)
 
 
 @ffi.def_extern()
-def rcv_handle_msg(rcv, msg, clientd):
+def pylbm_rcv_cb_proc(rcv, msg, clientd):
     'Callback from wrapper. clientd is LbmRcvCallback object'
     lbm_rcv_callback = ffi.from_handle(clientd)
     lbm_rcv_callback.lbm_rcv_deliver(rcv, msg)
@@ -54,7 +54,7 @@ def app_on_receive_event(rcv, msg, app_state):
 
 
 @ffi.def_extern()
-def handle_src_event(src, event, event_data, clientd):
+def pylbm_src_cb_proc(src, event, event_data, clientd):
     'UM source event application callback.'
     if event == lib.LBM_SRC_EVENT_CONNECT:
         clientname = ffi.string(ffi.cast('const char *', event_data))
@@ -68,7 +68,7 @@ def handle_src_event(src, event, event_data, clientd):
 
 
 @ffi.def_extern()
-def lbm_log_msg(level, message, clientd):
+def pylbm_log_cb_proc(level, message, clientd):
     'UM logger application callback.'
     print(ffi.string(message).decode('utf-8'))
     return 0
@@ -82,7 +82,7 @@ def lbmerr(err):
 def main():
     'Put "main" program in a function to allow callable.'
     # Setup logging callback.
-    lbmerr(lib.lbm_log(lib.lbm_log_msg, ffi.NULL))
+    lbmerr(lib.lbm_log(lib.pylbm_log_cb_proc, ffi.NULL))
 
     # Read the config file.
     err = lib.lbm_config(b'um.cfg')
@@ -127,7 +127,7 @@ def main():
 
     # Create the receiver.
     p_rcv = ffi.new('lbm_rcv_t **')
-    lbmerr(lib.lbm_rcv_create(p_rcv, ctx, topic, lib.rcv_handle_msg,
+    lbmerr(lib.lbm_rcv_create(p_rcv, ctx, topic, lib.pylbm_rcv_cb_proc,
                               callback_handle, ffi.NULL))
     # Get the receiver object.
     rcv = p_rcv[0]
@@ -151,7 +151,7 @@ def main():
 
     # Create the source.
     p_src = ffi.new('lbm_src_t **')
-    lbmerr(lib.lbm_src_create(p_src, ctx, topic, lib.handle_src_event,
+    lbmerr(lib.lbm_src_create(p_src, ctx, topic, lib.pylbm_src_cb_proc,
                               ffi.NULL, ffi.NULL))
     # Get the source object.
     src = p_src[0]
