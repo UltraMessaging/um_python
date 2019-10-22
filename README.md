@@ -92,8 +92,8 @@ You can either clone the repository or
 [download the ZIP file](https://github.com/UltraMessaging/um_python/archive/master.zip).
 From Linux, enter:
 ```
-wget https://github.com/UltraMessaging/um_python/archive/master.zip
-unzip master
+wget -O um_python-master.zip https://github.com/UltraMessaging/um_python/archive/master.zip
+unzip um_python-master.zip
 cd um_python-master
 ```
 
