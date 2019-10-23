@@ -100,7 +100,7 @@ def pylbm_log_cb_proc(_unused_level, message, _unused_clientd):
 
 def lbmerr(err):
     """Very simple, programmer-friendly (user-hostile) error checker."""
-    assert err != lib.LBM_FAILURE, ffi.string(lib.lbm_errmsg())
+    assert err != lib.LBM_FAILURE, ffi.string(lib.lbm_errmsg().decode('utf-8'))
 
 
 def main():
@@ -112,7 +112,7 @@ def main():
     err = lib.lbm_config(b'um.cfg')
     if err == lib.LBM_FAILURE:
         print("Warning, lbm_config 'um.cfg' error: " +
-              str(ffi.string(lib.lbm_errmsg())))
+              ffi.string(lib.lbm_errmsg()).decode('utf-8'))
 
     # Create the context attribute.
     p_cattr = ffi.new('lbm_context_attr_t **')
@@ -125,6 +125,7 @@ def main():
     # See python function pylbm_src_notify_function_cb() above.
     lbm_src_notify_func = ffi.new('lbm_src_notify_func_t *')
     lbm_src_notify_func.notifyfunc = lib.pylbm_src_notify_function_cb
+    lbm_src_notify_func.clientd = ffi.NULL
     lbmerr(
         lib.lbm_context_attr_setopt(cattr,
                                     b'resolver_source_notification_function',
