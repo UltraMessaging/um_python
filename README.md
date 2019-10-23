@@ -1,20 +1,13 @@
 # um_python Vers 0.3
 Python API generator for Ultra Messaging using Python cffi.
 
-**THIS IS A WORK IN PROGRESS** Disruptive changes should be expected
-on a daily, even hourly basis.
-There is no "stable" release as yet, although we attempt to make the
-"master" branch at least buildable at any given time.
-The purpose for publishing the um_python project this early is to give
-users a feeling for the direction we are going, and to give users the
-opportunity to contribute.
-
 * [Introduction](#introduction)
 * [Prerequisites](#prerequisites)
 * [Generate the Wrapper](#generate-the-wrapper)
 * [Test the Wrapper](#test-the-wrapper)
 * [Using the API](#using-the-api)
 * [Troubleshooting](#troubleshooting)
+* [To Do](#to-do)
 
 # Introduction
 
@@ -39,6 +32,11 @@ We are happy look into any problems you find and fix them if possible.
 But the bulk of testing responsibility is yours.
 Please contact us through the normal UM support channel if you encounter
 problems and/or have suggestions for its improvement.
+
+We actively encourage our users to submit improvements to this project.
+If your UM Python submission is better served as a separate project, we
+will link to it, or will even host it if you prefer.
+See [To Do](#to-do) for more information.
 
 ## Why Make Users Generate the API? Why Not Just Ship the Wrapper?
 
@@ -82,7 +80,7 @@ You must build the ".so" with the version of Python that you plan to use
 in your runtime environment.
 
 * The Python module "cffi" must be installed.
-See [Installation and Status](https://cffi.readthedocs.io/en/latest/installation.html).
+See [cffi installation instructions](https://cffi.readthedocs.io/en/latest/installation.html).
 
 # Generate the Wrapper
 
@@ -258,4 +256,31 @@ TypeError: an integer is required
 
 This can mean that you coded an application callback that didn't return
 a value.
-Most application callbacks need to return an interger value zero.
+Most application callbacks need to return an integer value zero.
+
+# To Do
+
+At present, Informatica does not have specific plans to implement any
+of the following improvements.
+We welcome contributions by the user community.
+
+User submissions that include Python code should be
+[PEP 8](https://www.python.org/dev/peps/pep-0008/) compliant and pass "pylint"
+with no warnings, using a minimum of pylint disable/enable comments.
+Use of "pycodestyle" is also recommended.
+
+## Wrap the Wrapper
+
+By its very nature, the cffi-based API is C-centric.
+The non-time-critical parts of the API could be made more pythonic
+and object-oriented by creating a Python wrapper around the cffi API.
+For non-latency-sensitive applications, even the send and receive
+paths could be wrapped.
+
+## Test Suite
+
+The um_python project should have a reasonably thorough automated
+test suite.
+A traditional unit test suite is not possible since the underlying
+UM library functions are not testable in isolation.
+But some kind of integration/system-level test would be helpful.
