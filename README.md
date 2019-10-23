@@ -35,7 +35,8 @@ problems and/or have suggestions for its improvement.
 
 We actively encourage our users to submit improvements to this project.
 If your UM Python submission is better served as a separate project, we
-will link to it, or will even host it if you prefer.
+will link to it, or will even consider hosting it under the UltraMessaging
+org if you prefer.
 See [To Do](#to-do) for more information.
 
 ## Why Make Users Generate the API? Why Not Just Ship the Wrapper?
