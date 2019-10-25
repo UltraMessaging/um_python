@@ -189,7 +189,7 @@ The 4th parameter is defined as:
 ```
   lbm_rcv_cb_proc  proc
 ```
-where "lbm_rcv_cb_proc" is a typedef.
+where "lbm_rcv_cb_proc" is a typedef of a function pointer.
 
 To determine the corresponding Python function, drop any "_t" suffix
 (there isn't one for this typedef) and add a "py" in front.
@@ -200,18 +200,20 @@ It should look like this:
   extern "Python" int  pylbm_rcv_cb_proc(lbm_rcv_t *rcv, lbm_msg_t *msg, void *clientd);
 ```
 
-This guides you in the definition of the python function, which should be
-defined like this:
+This guides you in the definition of the python function,
+which should look like this:
 ```
 @ffi.def_extern()
 def pylbm_rcv_cb_proc(rcv, msg, clientd):
 ```
+This is the function that you must write in your application,
+which is called for receiver events.
 
 This approach has a significant disadvantage:
 it only allows for a single callback of each type.
-However, it is not unusual for a developer to want to have multiple callback
+However, it is not unusual for a developer to want multiple callback
 functions for the same callback type.
-For example, messages from different topics or classes of topics might
+For example, messages from different topics or categories of topics often
 require different application logic to process.
 
 ### LbmRcvCallback Class
@@ -219,10 +221,25 @@ require different application logic to process.
 A simple general approach of solving this problem is to define a callback
 class which decouples the application callback from the function that
 the wrapper directly calls.
-This approach is demonstrated for the receiver callback in the "lbmtst.py"
-test program using a class named "LbmRcvCallback".
+An example of this approach is demonstrated for the receiver callback in
+the "lbmtst.py" test program using a class named "LbmRcvCallback".
 It works as follows:
 
+As the application is preparing to create a UM receiver,
+it creates an instance of "LbmRcvCallback",
+passing it the desired application callback and client data object.
+For example (taken from "lbmtst.py"):
+```
+lbm_rcv_callback = LbmRcvCallback(app_on_receive_event, app_state)
+callback_handle = ffi.new_handle(lbm_rcv_callback)
+...
+lbmerr(lib.lbm_rcv_create(p_rcv, ctx, topic, lib.pylbm_rcv_cb_proc,
+                          callback_handle, ffi.NULL))
+```
+Note that a cffi-compatible handle must be created of the object
+instance so that it can be passed to the UM API.
+
+Then, when UM delivers a receiver event:
 1. The wrapper calls pylbm_rcv_cb_proc()
 2. pylbm_rcv_cb_proc() assumes the clientd is an instance of the
 LbmRcvCallback class, and invokes the lbm_rcv_deliver() method.
