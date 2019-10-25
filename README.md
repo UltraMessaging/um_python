@@ -208,14 +208,17 @@ def pylbm_rcv_cb_proc(rcv, msg, clientd):
 ```
 
 This approach has a significant disadvantage:
-It is not unusual for a developer to want to have different receive
-callbacks for different topics (or classes of topics).
+it only allows for a single callback of each type.
+However, it is not unusual for a developer to want to have multiple callback
+functions for the same callback type.
+For example, messages from different topics or classes of topics might
+require different application logic to process.
 
 ### LbmRcvCallback Class
 
-A simple approach of solving this problem is to define a callback class which
-decouples the callback that UM calls from the application callback
-function.
+A simple general approach of solving this problem is to define a callback
+class which decouples the application callback from the function that
+the wrapper directly calls.
 This approach is demonstrated for the receiver callback in the "lbmtst.py"
 test program using a class named "LbmRcvCallback".
 It works as follows:
