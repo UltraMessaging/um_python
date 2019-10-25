@@ -210,14 +210,57 @@ def pylbm_rcv_cb_proc(rcv, msg, clientd):
 This approach has a significant disadvantage:
 It is not unusual for a developer to want to have different receive
 callbacks for different topics (or classes of topics).
+
+### LbmRcvCallback Class
+
 A simple approach of solving this problem is to define a callback class which
 decouples the callback that UM calls from the application callback
 function.
 This approach is demonstrated for the receiver callback in the "lbmtst.py"
 test program using a class named "LbmRcvCallback".
+It works as follows:
+
+1. The wrapper calls pylbm_rcv_cb_proc()
+2. pylbm_rcv_cb_proc() assumes the clientd is an instance of the
+LbmRcvCallback class, and invokes the lbm_rcv_deliver() method.
+3. lbm_rcv_deliver() calls the application's registered callback.
+
 Note however that this class introduces a small additional latency.
-For the lowest possible latency, you must directly use the single receiver
-callback "pylbm_rcv_cb_proc()".
+
+### Multiple Entry Points
+
+A lower-latency solution is to define multiple Python entry points that are
+directly callable by the wrapper.
+This can be done by editing the "lbm_py_callback.h" file and adding
+additional entries.
+And then re-building the wrapper layer using the command:
+```
+python `pwd`/lbmwrapper.py
+```
+
+For example, to add a second receiver callback, you could do this:
+```
+echo 'extern "Python" int  my_rcv_cb_2(lbm_rcv_t *rcv, lbm_msg_t *msg, void *clientd);' >>lbm_py_callback.h
+python `pwd`/lbmwrapper.py
+```
+
+Then, inside your application:
+```
+@ffi.def_extern()
+def my_rcv_cb_2(rcv, msg, clientd):
+    ...
+
+...
+lib.lbm_rcv_create(p_rcv, ctx, topic, lib.my_rcv_cb_2,
+                              my_clientd, ffi.NULL)
+```
+
+The disadvantage of doing all this is that you need to re-build the
+wrapper any time some application wants to add an additional callback,
+and could lead to multiple versions of the wrapper for different
+applications.
+However, if you simply consider the wrapper to be a part of the
+application and package the two together, it might be a workable plan.
 
 # Troubleshooting
 
